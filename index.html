@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>動詞変形 V-Trainer (修正版)</title>
+    <title>動詞変形 V-Trainer (五十音順修正版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none; }
@@ -18,7 +18,7 @@
 
     <div id="home-screen" class="container mx-auto p-4 max-w-2xl">
         <h1 class="text-3xl font-black text-center mb-2 text-blue-700">V-Trainer</h1>
-        <p class="text-center text-gray-500 mb-8 text-sm">みんなの日本語 動詞変形（修正版）</p>
+        <p class="text-center text-gray-500 mb-8 text-sm">みんなの日本語 動詞変形練習</p>
         
         <div class="bg-white p-6 rounded-2xl shadow-sm mb-6 border border-gray-100">
             <h2 class="font-bold mb-3 flex items-center gap-2"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-sm">1</span> 練習する形</h2>
@@ -53,7 +53,8 @@
                     <button onclick="toggleAll(false)" class="text-gray-400 font-medium">解除</button>
                 </div>
             </div>
-            <div id="verb-list" class="grid grid-cols-2 gap-2 h-72 overflow-y-auto p-1 text-sm"></div>
+            <div id="verb-list" class="grid grid-cols-2 gap-2 h-72 overflow-y-auto p-1 text-sm">
+                </div>
         </div>
 
         <button onclick="startPractice()" class="w-full bg-blue-600 text-white py-4 rounded-2xl text-xl font-bold shadow-blue-200 shadow-lg hover:bg-blue-700 transition-all active:transform active:scale-95">練習を始める</button>
@@ -76,42 +77,112 @@
         <div class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md border border-gray-100">
             <div class="text-6xl mb-4">🎉</div>
             <h2 class="text-2xl font-black mb-2">練習終了！</h2>
-            <button onclick="startPractice()" class="w-full bg-blue-600 text-white py-4 rounded-2xl text-xl font-bold mb-4 shadow-lg">もう一度練習する</button>
+            <button onclick="startPractice()" class="w-full bg-blue-600 text-white py-4 rounded-2xl text-xl font-bold mb-4 shadow-lg shadow-blue-100">もう一度練習する</button>
             <button onclick="exitPractice()" class="w-full bg-gray-100 text-gray-600 py-4 rounded-2xl font-bold">設定に戻る</button>
         </div>
     </div>
 
     <script>
+        // 動詞データ (L1-L50)
         const verbs = [
-            // Group 1
             { masu: "<ruby>会<rt>あ</rt></ruby>います", jisho: "<ruby>会<rt>あ</rt></ruby>う", nai: "<ruby>会<rt>あ</rt></ruby>わない", te: "<ruby>会<rt>あ</rt></ruby>って", ta: "<ruby>会<rt>あ</rt></ruby>った", kanou: "<ruby>会<rt>あ</rt></ruby>える", ikou: "<ruby>会<rt>あ</rt></ruby>おう", meirei: "<ruby>会<rt>あ</rt></ruby>え", kinshi: "<ruby>会<rt>あ</rt></ruby>うな", ba: "<ruby>会<rt>あ</rt></ruby>えば", ukemi: "<ruby>会<rt>あ</rt></ruby>われる", shieki: "<ruby>会<rt>あ</rt></ruby>わせる" },
+            { masu: "<ruby>開<rt>あ</rt></ruby>けます", jisho: "<ruby>開<rt>あ</rt></ruby>ける", nai: "<ruby>開<rt>あ</rt></ruby>けない", te: "<ruby>開<rt>あ</rt></ruby>けて", ta: "<ruby>開<rt>あ</rt></ruby>けた", kanou: "<ruby>開<rt>あ</rt></ruby>けられる", ikou: "<ruby>開<rt>あ</rt></ruby>けよう", meirei: "<ruby>開<rt>あ</rt></ruby>けろ", kinshi: "<ruby>開<rt>あ</rt></ruby>けるな", ba: "<ruby>開<rt>あ</rt></ruby>ければ", ukemi: "<ruby>開<rt>あ</rt></ruby>けられる", shieki: "<ruby>開<rt>あ</rt></ruby>けさせる" },
+            { masu: "あげます", jisho: "あげる", nai: "あげない", te: "あげて", ta: "あげた", kanou: "あげられる", ikou: "あげよう", meirei: "あげろ", kinshi: "あげるな", ba: "あげれば", ukemi: "あげられる", shieki: "あげさせる" },
             { masu: "<ruby>遊<rt>あそ</rt></ruby>びます", jisho: "<ruby>遊<rt>あそ</rt></ruby>ぶ", nai: "<ruby>遊<rt>あそ</rt></ruby>ばない", te: "<ruby>遊<rt>あそ</rt></ruby>んで", ta: "<ruby>遊<rt>あそ</rt></ruby>んだ", kanou: "<ruby>遊<rt>あそ</rt></ruby>べる", ikou: "<ruby>遊<rt>あそ</rt></ruby>ぼう", meirei: "<ruby>遊<rt>あそ</rt></ruby>べ", kinshi: "<ruby>遊<rt>あそ</rt></ruby>ぶな", ba: "<ruby>遊<rt>あそ</rt></ruby>べば", ukemi: "<ruby>遊<rt>あそ</rt></ruby>ばれる", shieki: "<ruby>遊<rt>あそ</rt></ruby>ばせる" },
+            { masu: "<ruby>集<rt>あつ</rt></ruby>めます", jisho: "<ruby>集<rt>あつ</rt></ruby>める", nai: "<ruby>集<rt>あつ</rt></ruby>めない", te: "<ruby>集<rt>あつ</rt></ruby>めて", ta: "<ruby>集<rt>あつ</rt></ruby>めた", kanou: "<ruby>集<rt>あつ</rt></ruby>められる", ikou: "<ruby>集<rt>あつ</rt></ruby>めよう", meirei: "<ruby>集<rt>あつ</rt></ruby>めろ", kinshi: "<ruby>集<rt>あつ</rt></ruby>めるな", ba: "<ruby>集<rt>あつ</rt></ruby>めれば", ukemi: "<ruby>集<rt>あつ</rt></ruby>められる", shieki: "<ruby>集<rt>あつ</rt></ruby>めさせる" },
             { masu: "<ruby>洗<rt>あら</rt></ruby>います", jisho: "<ruby>洗<rt>あら</rt></ruby>う", nai: "<ruby>洗<rt>あら</rt></ruby>わない", te: "<ruby>洗<rt>あら</rt></ruby>って", ta: "<ruby>洗<rt>あら</rt></ruby>った", kanou: "<ruby>洗<rt>あら</rt></ruby>える", ikou: "<ruby>洗<rt>あら</rt></ruby>おう", meirei: "<ruby>洗<rt>あら</rt></ruby>え", kinshi: "<ruby>洗<rt>あら</rt></ruby>うな", ba: "<ruby>洗<rt>あら</rt></ruby>えば", ukemi: "<ruby>洗<rt>あら</rt></ruby>われる", shieki: "<ruby>洗<rt>あら</rt></ruby>わせる" },
+            { masu: "います", jisho: "いる", nai: "いない", te: "いて", ta: "いた", kanou: "いられる", ikou: "いよう", meirei: "いろ", kinshi: "いるな", ba: "いれば", ukemi: "いられる", shieki: "いさせる" },
             { masu: "<ruby>言<rt>い</rt></ruby>います", jisho: "<ruby>言<rt>い</rt></ruby>う", nai: "<ruby>言<rt>い</rt></ruby>わない", te: "<ruby>言<rt>い</rt></ruby>って", ta: "<ruby>言<rt>い</rt></ruby>った", kanou: "<ruby>言<rt>い</rt></ruby>える", ikou: "<ruby>言<rt>い</rt></ruby>おう", meirei: "<ruby>言<rt>い</rt></ruby>え", kinshi: "<ruby>言<rt>い</rt></ruby>うな", ba: "<ruby>言<rt>い</rt></ruby>えば", ukemi: "<ruby>言<rt>い</rt></ruby>われる", shieki: "<ruby>言<rt>い</rt></ruby>わせる" },
             { masu: "<ruby>行<rt>い</rt></ruby>きます", jisho: "<ruby>行<rt>い</rt></ruby>く", nai: "<ruby>行<rt>い</rt></ruby>かない", te: "<ruby>行<rt>い</rt></ruby>って", ta: "<ruby>行<rt>い</rt></ruby>った", kanou: "<ruby>行<rt>い</rt></ruby>ける", ikou: "<ruby>行<rt>い</rt></ruby>こう", meirei: "<ruby>行<rt>い</rt></ruby>け", kinshi: "<ruby>行<rt>い</rt></ruby>くな", ba: "<ruby>行<rt>い</rt></ruby>えば", ukemi: "<ruby>行<rt>い</rt></ruby>かれる", shieki: "<ruby>行<rt>い</rt></ruby>かせる" },
             { masu: "<ruby>急<rt>いそ</rt></ruby>ぎます", jisho: "<ruby>急<rt>いそ</rt></ruby>ぐ", nai: "<ruby>急<rt>いそ</rt></ruby>がない", te: "<ruby>急<rt>いそ</rt></ruby>いで", ta: "<ruby>急<rt>いそ</rt></ruby>いだ", kanou: "<ruby>急<rt>いそ</rt></ruby>げる", ikou: "<ruby>急<rt>いそ</rt></ruby>ぼう", meirei: "<ruby>急<rt>いそ</rt></ruby>げ", kinshi: "<ruby>急<rt>いそ</rt></ruby>ぐな", ba: "<ruby>急<rt>いそ</rt></ruby>えば", ukemi: "<ruby>急<rt>いそ</rt></ruby>がれる", shieki: "<ruby>急<rt>いそ</rt></ruby>がせる" },
+            { masu: "<ruby>入<rt>い</rt></ruby>れます", jisho: "<ruby>入<rt>い</rt></ruby>れる", nai: "<ruby>入<rt>い</rt></ruby>れない", te: "<ruby>入<rt>い</rt></ruby>れて", ta: "<ruby>入<rt>い</rt></ruby>れた", kanou: "<ruby>入<rt>い</rt></ruby>れられる", ikou: "<ruby>入<rt>い</rt></ruby>れよう", meirei: "<ruby>入<rt>い</rt></ruby>れろ", kinshi: "<ruby>入<rt>い</rt></ruby>れるな", ba: "<ruby>入<rt>い</rt></ruby>れれば", ukemi: "<ruby>入<rt>い</rt></ruby>れられる", shieki: "<ruby>入<rt>い</rt></ruby>れさせる" },
+            { masu: "<ruby>歌<rt>うた</rt></ruby>います", jisho: "<ruby>歌<rt>うた</rt></ruby>う", nai: "<ruby>歌<rt>うた</rt></ruby>わない", te: "<ruby>歌<rt>うた</rt></ruby>って", ta: "<ruby>歌<rt>うた</rt></ruby>った", kanou: "<ruby>歌<rt>うた</rt></ruby>える", ikou: "<ruby>歌<rt>うた</rt></ruby>おう", meirei: "<ruby>歌<rt>うた</rt></ruby>え", kinshi: "<ruby>歌<rt>うた</rt></ruby>うな", ba: "<ruby>歌<rt>うた</rt></ruby>えば", ukemi: "<ruby>歌<rt>うた</rt></ruby>われる", shieki: "<ruby>歌<rt>うた</rt></ruby>わせる" },
+            { masu: "<ruby>写<rt>うつ</rt></ruby>します", jisho: "<ruby>写<rt>うつ</rt></ruby>す", nai: "<ruby>写<rt>うつ</rt></ruby>さない", te: "<ruby>写<rt>うつ</rt></ruby>して", ta: "<ruby>写<rt>うつ</rt></ruby>した", kanou: "<ruby>写<rt>うつ</rt></ruby>せる", ikou: "<ruby>写<rt>うつ</rt></ruby>そう", meirei: "<ruby>写<rt>うつ</rt></ruby>せ", kinshi: "<ruby>写<rt>うつ</rt></ruby>すな", ba: "<ruby>写<rt>うつ</rt></ruby>せば", ukemi: "<ruby>写<rt>うつ</rt></ruby>される", shieki: "<ruby>写<rt>うつ</rt></ruby>させる" },
+            { masu: "<ruby>売<rt>う</rt></ruby>ります", jisho: "<ruby>売<rt>う</rt></ruby>る", nai: "<ruby>売<rt>う</rt></ruby>らない", te: "<ruby>売<rt>う</rt></ruby>って", ta: "<ruby>売<rt>う</rt></ruby>った", kanou: "<ruby>売<rt>う</rt></ruby>れる", ikou: "<ruby>売<rt>う</rt></ruby>ろう", meirei: "<ruby>売<rt>う</rt></ruby>れ", kinshi: "<ruby>売<rt>う</rt></ruby>るな", ba: "<ruby>売<rt>う</rt></ruby>れば", ukemi: "<ruby>売<rt>う</rt></ruby>られる", shieki: "<ruby>売<rt>う</rt></ruby>らせる" },
+            { masu: "<ruby>起<rt>お</rt></ruby>きます", jisho: "<ruby>起<rt>お</rt></ruby>きる", nai: "<ruby>起<rt>お</rt></ruby>きない", te: "<ruby>起<rt>お</rt></ruby>きて", ta: "<ruby>起<rt>お</rt></ruby>きた", kanou: "<ruby>起<rt>お</rt></ruby>きられる", ikou: "<ruby>起<rt>お</rt></ruby>きよう", meirei: "<ruby>起<rt>お</rt></ruby>きろ", kinshi: "<ruby>起<rt>お</rt></ruby>きるな", ba: "<ruby>起<rt>お</rt></ruby>きれば", ukemi: "<ruby>起<rt>お</rt></ruby>きられる", shieki: "<ruby>起<rt>お</rt></ruby>きさせる" },
+            { masu: "<ruby>置<rt>お</rt></ruby>きます", jisho: "<ruby>置<rt>お</rt></ruby>く", nai: "<ruby>置<rt>お</rt></ruby>かない", te: "<ruby>置<rt>お</rt></ruby>いて", ta: "<ruby>置<rt>お</rt></ruby>いた", kanou: "<ruby>置<rt>お</rt></ruby>ける", ikou: "<ruby>置<rt>お</rt></ruby>こう", meirei: "<ruby>置<rt>お</rt></ruby>け", kinshi: "<ruby>置<rt>お</rt></ruby>くな", ba: "<ruby>置<rt>お</rt></ruby>けば", ukemi: "<ruby>置<rt>お</rt></ruby>かれる", shieki: "<ruby>置<rt>お</rt></ruby>かせる" },
+            { masu: "<ruby>教<rt>おし</rt></ruby>えます", jisho: "<ruby>教<rt>おし</rt></ruby>える", nai: "<ruby>教<rt>おし</rt></ruby>えない", te: "<ruby>教<rt>おし</rt></ruby>えて", ta: "<ruby>教<rt>おし</rt></ruby>えた", kanou: "<ruby>教<rt>おし</rt></ruby>えられる", ikou: "<ruby>教<rt>おし</rt></ruby>えよう", meirei: "<ruby>教<rt>おし</rt></ruby>えろ", kinshi: "<ruby>教<rt>おし</rt></ruby>えるな", ba: "<ruby>教<rt>おし</rt></ruby>えれば", ukemi: "<ruby>教<rt>おし</rt></ruby>えられる", shieki: "<ruby>教<rt>おし</rt></ruby>えさせる" },
+            { masu: "<ruby>押<rt>お</rt></ruby>します", jisho: "<ruby>押<rt>お</rt></ruby>す", nai: "<ruby>押<rt>お</rt></ruby>さない", te: "<ruby>押<rt>お</rt></ruby>して", ta: "<ruby>押<rt>お</rt></ruby>した", kanou: "<ruby>押<rt>お</rt></ruby>せる", ikou: "<ruby>押<rt>お</rt></ruby>おう", meirei: "<ruby>押<rt>お</rt></ruby>せ", kinshi: "<ruby>押<rt>お</rt></ruby>すな", ba: "<ruby>押<rt>お</rt></ruby>せば", ukemi: "<ruby>押<rt>お</rt></ruby>される", shieki: "<ruby>押<rt>お</rt></ruby>させる" },
+            { masu: "<ruby>覚<rt>おぼ</rt></ruby>えます", jisho: "<ruby>覚<rt>おぼ</rt></ruby>える", nai: "<ruby>覚<rt>おぼ</rt></ruby>えない", te: "<ruby>覚<rt>おぼ</rt></ruby>えて", ta: "<ruby>覚<rt>おぼ</rt></ruby>えた", kanou: "<ruby>覚<rt>おぼ</rt></ruby>えられる", ikou: "<ruby>覚<rt>おぼ</rt></ruby>えよう", meirei: "<ruby>覚<rt>おぼ</rt></ruby>えろ", kinshi: "<ruby>覚<rt>おぼ</rt></ruby>えるな", ba: "<ruby>覚<rt>おぼ</rt></ruby>えれば", ukemi: "<ruby>覚<rt>おぼ</rt></ruby>えられる", shieki: "<ruby>覚<rt>おぼ</rt></ruby>えさせる" },
+            { masu: "<ruby>泳<rt>およ</rt></ruby>ぎます", jisho: "<ruby>泳<rt>およ</rt></ruby>ぐ", nai: "<ruby>泳<rt>およ</rt></ruby>がない", te: "<ruby>泳<rt>およ</rt></ruby>いで", ta: "<ruby>泳<rt>およ</rt></ruby>いだ", kanou: "<ruby>泳<rt>およ</rt></ruby>げる", ikou: "<ruby>泳<rt>およ</rt></ruby>ごう", meirei: "<ruby>泳<rt>およ</rt></ruby>げ", kinshi: "<ruby>泳<rt>およ</rt></ruby>ぐな", ba: "<ruby>泳<rt>およ</rt></ruby>げば", ukemi: "<ruby>泳<rt>およ</rt></ruby>がれる", shieki: "<ruby>泳<rt>およ</rt></ruby>がせる" },
+            { masu: "<ruby>買<rt>か</rt></ruby>います", jisho: "<ruby>買<rt>か</rt></ruby>う", nai: "<ruby>買<rt>か</rt></ruby>わない", te: "<ruby>買<rt>か</rt></ruby>って", ta: "<ruby>買<rt>か</rt></ruby>った", kanou: "<ruby>買<rt>か</rt></ruby>える", ikou: "<ruby>買<rt>か</rt></ruby>おう", meirei: "<ruby>買<rt>か</rt></ruby>え", kinshi: "<ruby>買<rt>か</rt></ruby>うな", ba: "<ruby>買<rt>か</rt></ruby>えば", ukemi: "<ruby>買<rt>か</rt></ruby>われる", shieki: "<ruby>買<rt>か</rt></ruby>わせる" },
+            { masu: "<ruby>返<rt>かえ</rt></ruby>します", jisho: "<ruby>返<rt>かえ</rt></ruby>す", nai: "<ruby>返<rt>かえ</rt></ruby>さない", te: "<ruby>返<rt>かえ</rt></ruby>して", ta: "<ruby>返<rt>かえ</rt></ruby>した", kanou: "<ruby>返<rt>かえ</rt></ruby>せる", ikou: "<ruby>返<rt>かえ</rt></ruby>そう", meirei: "<ruby>返<rt>かえ</rt></ruby>せ", kinshi: "<ruby>返<rt>かえ</rt></ruby>すな", ba: "<ruby>返<rt>かえ</rt></ruby>せば", ukemi: "<ruby>返<rt>かえ</rt></ruby>される", shieki: "<ruby>返<rt>かえ</rt></ruby>させる" },
             { masu: "<ruby>書<rt>か</rt></ruby>きます", jisho: "<ruby>書<rt>か</rt></ruby>く", nai: "<ruby>書<rt>か</rt></ruby>かない", te: "<ruby>書<rt>か</rt></ruby>いて", ta: "<ruby>書<rt>か</rt></ruby>いた", kanou: "<ruby>書<rt>か</rt></ruby>ける", ikou: "<ruby>書<rt>か</rt></ruby>おう", meirei: "<ruby>書<rt>か</rt></ruby>け", kinshi: "<ruby>書<rt>か</rt></ruby>くな", ba: "<ruby>書<rt>か</rt></ruby>けば", ukemi: "<ruby>書<rt>か</rt></ruby>かれる", shieki: "<ruby>書<rt>か</rt></ruby>かせる" },
-            { masu: "<ruby>飲<rt>の</rt></ruby>みます", jisho: "<ruby>飲<rt>の</rt></ruby>む", nai: "<ruby>飲<rt>の</rt></ruby>まない", te: "<ruby>飲<rt>の</rt></ruby>んで", ta: "<ruby>飲<rt>の</rt></ruby>んだ", kanou: "<ruby>飲<rt>の</rt></ruby>める", ikou: "<ruby>飲<rt>の</rt></ruby>もう", meirei: "<ruby>飲<rt>の</rt></ruby>め", kinshi: "<ruby>飲<rt>の</rt></ruby>むな", ba: "<ruby>飲<rt>の</rt></ruby>めば", ukemi: "<ruby>飲<rt>の</rt></ruby>まれる", shieki: "<ruby>飲<rt>の</rt></ruby>ませる" },
-            // Group 2
-            { masu: "<ruby>食<rt>た</rt></ruby>べます", jisho: "<ruby>食<rt>た</rt></ruby>べる", nai: "<ruby>食<rt>た</rt></ruby>べない", te: "<ruby>食<rt>た</rt></ruby>べて", ta: "<ruby>食<rt>た</rt></ruby>めた", kanou: "<ruby>食<rt>た</rt></ruby>べられる", ikou: "<ruby>食<rt>た</rt></ruby>べよう", meirei: "<ruby>食<rt>た</rt></ruby>べろ", kinshi: "<ruby>食<rt>た</rt></ruby>べるな", ba: "<ruby>食<rt>た</rt></ruby>べれば", ukemi: "<ruby>食<rt>た</rt></ruby>べられる", shieki: "<ruby>食<rt>た</rt></ruby>べさせる" },
-            { masu: "<ruby>見<rt>み</rt></ruby>ます", jisho: "<ruby>見<rt>み</rt></ruby>る", nai: "<ruby>見<rt>み</rt></ruby>ない", te: "<ruby>見<rt>み</rt></ruby>て", ta: "<ruby>見<rt>み</rt></ruby>た", kanou: "<ruby>見<rt>み</rt></ruby>られる", ikou: "<ruby>見<rt>み</rt></ruby>よう", meirei: "<ruby>見<rt>み</rt></ruby>ろ", kinshi: "<ruby>見<rt>み</rt></ruby>るな", ba: "<ruby>見<rt>み</rt></ruby>れば", ukemi: "<ruby>見<rt>み</rt></ruby>られる", shieki: "<ruby>見<rt>み</rt></ruby>させる" },
-            // Group 3
+            { masu: "<ruby>貸<rt>か</rt></ruby>します", jisho: "<ruby>貸<rt>か</rt></ruby>す", nai: "<ruby>貸<rt>か</rt></ruby>さない", te: "<ruby>貸<rt>か</rt></ruby>して", ta: "<ruby>貸<rt>か</rt></ruby>した", kanou: "<ruby>貸<rt>か</rt></ruby>せる", ikou: "<ruby>貸<rt>か</rt></ruby>そう", meirei: "<ruby>貸<rt>か</rt></ruby>せ", kinshi: "<ruby>貸<rt>か</rt></ruby>すな", ba: "<ruby>貸<rt>か</rt></ruby>せば", ukemi: "<ruby>貸<rt>か</rt></ruby>される", shieki: "<ruby>貸<rt>か</rt></ruby>させる" },
+            { masu: "<ruby>聞<rt>き</rt></ruby>きます", jisho: "<ruby>聞<rt>き</rt></ruby>く", nai: "<ruby>聞<rt>き</rt></ruby>かない", te: "<ruby>聞<rt>き</rt></ruby>いて", ta: "<ruby>聞<rt>き</rt></ruby>いた", kanou: "<ruby>聞<rt>き</rt></ruby>ける", ikou: "<ruby>聞<rt>き</rt></ruby>こう", meirei: "<ruby>聞<rt>き</rt></ruby>け", kinshi: "<ruby>聞<rt>き</rt></ruby>くな", ba: "<ruby>聞<rt>き</rt></ruby>けば", ukemi: "<ruby>聞<rt>き</rt></ruby>かれる", shieki: "<ruby>聞<rt>き</rt></ruby>かせる" },
             { masu: "<ruby>来<rt>き</rt></ruby>ます", jisho: "<ruby>来<rt>く</rt></ruby>る", nai: "<ruby>来<rt>こ</rt></ruby>ない", te: "<ruby>来<rt>き</rt></ruby>て", ta: "<ruby>来<rt>き</rt></ruby>た", kanou: "<ruby>来<rt>こ</rt></ruby>られる", ikou: "<ruby>来<rt>こ</rt></ruby>よう", meirei: "<ruby>来<rt>こ</rt></ruby>い", kinshi: "<ruby>来<rt>く</rt></ruby>るな", ba: "<ruby>来<rt>く</rt></ruby>れば", ukemi: "<ruby>来<rt>こ</rt></ruby>られる", shieki: "<ruby>来<rt>こ</rt></ruby>させる" },
-            { masu: "します", jisho: "する", nai: "しない", te: "して", ta: "した", kanou: "できる", ikou: "しよう", meirei: "しろ", kinshi: "するな", ba: "すれば", ukemi: "される", shieki: "させる" }
+            { masu: "<ruby>切<rt>き</rt></ruby>ります", jisho: "<ruby>切<rt>き</rt></ruby>る", nai: "<ruby>切<rt>き</rt></ruby>らない", te: "<ruby>切<rt>き</rt></ruby>って", ta: "<ruby>切<rt>き</rt></ruby>った", kanou: "<ruby>切<rt>き</rt></ruby>れる", ikou: "<ruby>切<rt>き</rt></ruby>ろう", meirei: "<ruby>切<rt>き</rt></ruby>れ", kinshi: "<ruby>切<rt>き</rt></ruby>るな", ba: "<ruby>切<rt>き</rt></ruby>れば", ukemi: "<ruby>切<rt>き</rt></ruby>られる", shieki: "<ruby>切<rt>き</rt></ruby>らせる" },
+            { masu: "<ruby>消<rt>け</rt></ruby>します", jisho: "<ruby>消<rt>け</rt></ruby>す", nai: "<ruby>消<rt>け</rt></ruby>さない", te: "<ruby>消<rt>け</rt></ruby>して", ta: "<ruby>消<rt>け</rt></ruby>した", kanou: "<ruby>消<rt>け</rt></ruby>せる", ikou: "<ruby>消<rt>け</rt></ruby>そう", meirei: "<ruby>消<rt>け</rt></ruby>せ", kinshi: "<ruby>消<rt>け</rt></ruby>すな", ba: "<ruby>消<rt>け</rt></ruby>せば", ukemi: "<ruby>消<rt>け</rt></ruby>される", shieki: "<ruby>消<rt>け</rt></ruby>させる" },
+            { masu: "します", jisho: "する", nai: "しない", te: "して", ta: "した", kanou: "できる", ikou: "しよう", meirei: "しろ", kinshi: "するな", ba: "すれば", ukemi: "される", shieki: "させる" },
+            { masu: "<ruby>死<rt>し</rt></ruby>にます", jisho: "<ruby>死<rt>し</rt></ruby>ぬ", nai: "<ruby>死<rt>し</rt></ruby>なない", te: "<ruby>死<rt>し</rt></ruby>んで", ta: "<ruby>死<rt>し</rt></ruby>んだ", kanou: "<ruby>死<rt>し</rt></ruby>ねる", ikou: "<ruby>死<rt>し</rt></ruby>のう", meirei: "<ruby>死<rt>し</rt></ruby>ね", kinshi: "<ruby>死<rt>し</rt></ruby>ぬな", ba: "<ruby>死<rt>し</rt></ruby>ねば", ukemi: "<ruby>死<rt>し</rt></ruby>なれる", shieki: "<ruby>死<rt>し</rt></ruby>なせる" },
+            { masu: "<ruby>座<rt>すわ</rt></ruby>ります", jisho: "<ruby>座<rt>すわ</rt></ruby>る", nai: "<ruby>座<rt>すわ</rt></ruby>らない", te: "<ruby>座<rt>すわ</rt></ruby>って", ta: "<ruby>座<rt>すわ</rt></ruby>った", kanou: "<ruby>座<rt>すわ</rt></ruby>れる", ikou: "<ruby>座<rt>すわ</rt></ruby>ろう", meirei: "<ruby>座<rt>すわ</rt></ruby>れ", kinshi: "<ruby>座<rt>すわ</rt></ruby>るな", ba: "<ruby>座<rt>すわ</rt></ruby>れば", ukemi: "<ruby>座<rt>すわ</rt></ruby>られる", shieki: "<ruby>座<rt>すわ</rt></ruby>らせる" },
+            { masu: "<ruby>出<rt>だ</rt></ruby>します", jisho: "<ruby>出<rt>だ</rt></ruby>す", nai: "<ruby>出<rt>だ</rt></ruby>さない", te: "<ruby>出<rt>だ</rt></ruby>して", ta: "<ruby>出<rt>だ</rt></ruby>した", kanou: "<ruby>出<rt>だ</rt></ruby>せる", ikou: "<ruby>出<rt>だ</rt></ruby>そう", meirei: "<ruby>出<rt>だ</rt></ruby>せ", kinshi: "<ruby>出<rt>だ</rt></ruby>すな", ba: "<ruby>出<rt>だ</rt></ruby>せば", ukemi: "<ruby>出<rt>だ</rt></ruby>される", shieki: "<ruby>出<rt>だ</rt></ruby>させる" },
+            { masu: "<ruby>立<rt>た</rt></ruby>ちます", jisho: "<ruby>立<rt>た</rt></ruby>つ", nai: "<ruby>立<rt>た</rt></ruby>たない", te: "<ruby>立<rt>た</rt></ruby>って", ta: "<ruby>立<rt>た</rt></ruby>った", kanou: "<ruby>立<rt>た</rt></ruby>てる", ikou: "<ruby>立<rt>た</rt></ruby>とう", meirei: "<ruby>立<rt>た</rt></ruby>て", kinshi: "<ruby>立<rt>た</rt></ruby>つな", ba: "<ruby>立<rt>た</rt></ruby>てば", ukemi: "<ruby>立<rt>た</rt></ruby>たれる", shieki: "<ruby>立<rt>た</rt></ruby>たせる" },
+            { masu: "<ruby>食<rt>た</rt></ruby>べます", jisho: "<ruby>食<rt>た</rt></ruby>べる", nai: "<ruby>食<rt>た</rt></ruby>べない", te: "<ruby>食<rt>た</rt></ruby>べて", ta: "<ruby>食<rt>た</rt></ruby>めた", kanou: "<ruby>食<rt>た</rt></ruby>べられる", ikou: "<ruby>食<rt>た</rt></ruby>べよう", meirei: "<ruby>食<rt>た</rt></ruby>べろ", kinshi: "<ruby>食<rt>た</rt></ruby>べるな", ba: "<ruby>食<rt>た</rt></ruby>べれば", ukemi: "<ruby>食<rt>た</rt></ruby>べられる", shieki: "<ruby>食<rt>た</rt></ruby>べさせる" },
+            { masu: "<ruby>使<rt>つか</rt></ruby>います", jisho: "<ruby>使<rt>つか</rt></ruby>う", nai: "<ruby>使<rt>つか</rt></ruby>わない", te: "<ruby>使<rt>つか</rt></ruby>って", ta: "<ruby>使<rt>つか</rt></ruby>った", kanou: "<ruby>使<rt>つか</rt></ruby>える", ikou: "<ruby>使<rt>つか</rt></ruby>おう", meirei: "<ruby>使<rt>つか</rt></ruby>え", kinshi: "<ruby>使<rt>つか</rt></ruby>うな", ba: "<ruby>使<rt>つか</rt></ruby>えば", ukemi: "<ruby>使<rt>つか</rt></ruby>われる", shieki: "<ruby>使<rt>つか</rt></ruby>わせる" },
+            { masu: "<ruby>着<rt>つ</rt></ruby>きます", jisho: "<ruby>着<rt>つ</rt></ruby>く", nai: "<ruby>着<rt>つ</rt></ruby>かない", te: "<ruby>着<rt>つ</rt></ruby>いて", ta: "<ruby>着<rt>つ</rt></ruby>いた", kanou: "<ruby>着<rt>つ</rt></ruby>ける", ikou: "<ruby>着<rt>つ</rt></ruby>こう", meirei: "<ruby>着<rt>つ</rt></ruby>け", kinshi: "<ruby>着<rt>つ</rt></ruby>くな", ba: "<ruby>着<rt>つ</rt></ruby>けば", ukemi: "<ruby>着<rt>つ</rt></ruby>かれる", shieki: "<ruby>着<rt>つ</rt></ruby>かせる" },
+            { masu: "<ruby>作<rt>つく</rt></ruby>ります", jisho: "<ruby>作<rt>つく</rt></ruby>る", nai: "<ruby>作<rt>つく</rt></ruby>らない", te: "<ruby>作<rt>つく</rt></ruby>って", ta: "<ruby>作<rt>つく</rt></ruby>った", kanou: "<ruby>作<rt>つく</rt></ruby>れる", ikou: "<ruby>作<rt>つく</rt></ruby>ろう", meirei: "<ruby>作<rt>つく</rt></ruby>れ", kinshi: "<ruby>作<rt>つく</rt></ruby>るな", ba: "<ruby>作<rt>つく</rt></ruby>れば", ukemi: "<ruby>作<rt>つく</rt></ruby>られる", shieki: "<ruby>作<rt>つく</rt></ruby>らせる" },
+            { masu: "<ruby>手伝<rt>てつだ</rt></ruby>います", jisho: "<ruby>手伝<rt>てつだ</rt></ruby>う", nai: "<ruby>手伝<rt>てつだ</rt></ruby>わない", te: "<ruby>手伝<rt>てつだ</rt></ruby>って", ta: "<ruby>手伝<rt>てつだ</rt></ruby>った", kanou: "<ruby>手伝<rt>てつだ</rt></ruby>える", ikou: "<ruby>手伝<rt>てつだ</rt></ruby>おう", meirei: "<ruby>手伝<rt>てつだ</rt></ruby>え", kinshi: "<ruby>手伝<rt>てつだ</rt></ruby>うな", ba: "<ruby>手伝<rt>てつだ</rt></ruby>えば", ukemi: "<ruby>手伝<rt>てつだ</rt></ruby>われる", shieki: "<ruby>手伝<rt>てつだ</rt></ruby>わせる" },
+            { masu: "<ruby>撮<rt>と</rt></ruby>ります", jisho: "<ruby>撮<rt>と</rt></ruby>る", nai: "<ruby>撮<rt>と</rt></ruby>らない", te: "<ruby>撮<rt>と</rt></ruby>って", ta: "<ruby>撮<rt>と</rt></ruby>った", kanou: "<ruby>撮<rt>と</rt></ruby>れる", ikou: "<ruby>撮<rt>と</rt></ruby>ろう", meirei: "<ruby>撮<rt>と</rt></ruby>れ", kinshi: "<ruby>撮<rt>と</rt></ruby>るな", ba: "<ruby>撮<rt>と</rt></ruby>れば", ukemi: "<ruby>撮<rt>と</rt></ruby>られる", shieki: "<ruby>撮<rt>と</rt></ruby>らせる" },
+            { masu: "<ruby>寝<rt>ね</rt></ruby>ます", jisho: "<ruby>寝<rt>ね</rt></ruby>る", nai: "<ruby>寝<rt>ね</rt></ruby>ない", te: "<ruby>寝<rt>ね</rt></ruby>て", ta: "<ruby>寝<rt>ね</rt></ruby>た", kanou: "<ruby>寝<rt>ね</rt></ruby>られる", ikou: "<ruby>寝<rt>ね</rt></ruby>よう", meirei: "<ruby>寝<rt>ね</rt></ruby>ろ", kinshi: "<ruby>寝<rt>ね</rt></ruby>るな", ba: "<ruby>寝<rt>ね</rt></ruby>れば", ukemi: "<ruby>寝<rt>ね</rt></ruby>られる", shieki: "<ruby>寝<rt>ね</rt></ruby>させる" },
+            { masu: "<ruby>飲<rt>の</rt></ruby>みます", jisho: "<ruby>飲<rt>の</rt></ruby>む", nai: "<ruby>飲<rt>の</rt></ruby>まない", te: "<ruby>飲<rt>の</rt></ruby>んで", ta: "<ruby>飲<rt>の</rt></ruby>んだ", kanou: "<ruby>飲<rt>の</rt></ruby>める", ikou: "<ruby>飲<rt>の</rt></ruby>もう", meirei: "<ruby>飲<rt>の</rt></ruby>め", kinshi: "<ruby>飲<rt>の</rt></ruby>むな", ba: "<ruby>飲<rt>の</rt></ruby>めば", ukemi: "<ruby>飲<rt>の</rt></ruby>まれる", shieki: "<ruby>飲<rt>の</rt></ruby>ませる" },
+            { masu: "<ruby>乗<rt>の</rt></ruby>ります", jisho: "<ruby>乗<rt>の</rt></ruby>る", nai: "<ruby>乗<rt>の</rt></ruby>らない", te: "<ruby>乗<rt>の</rt></ruby>って", ta: "<ruby>乗<rt>の</rt></ruby>った", kanou: "<ruby>乗<rt>の</rt></ruby>れる", ikou: "<ruby>乗<rt>の</rt></ruby>ろう", meirei: "<ruby>乗<rt>の</rt></ruby>れ", kinshi: "<ruby>乗<rt>の</rt></ruby>るな", ba: "<ruby>乗<rt>の</rt></ruby>れば", ukemi: "<ruby>乗<rt>の</rt></ruby>られる", shieki: "<ruby>乗<rt>の</rt></ruby>らせる" },
+            { masu: "<ruby>入<rt>はい</rt></ruby>ります", jisho: "<ruby>入<rt>はい</rt></ruby>る", nai: "<ruby>入<rt>はい</rt></ruby>らない", te: "<ruby>入<rt>はい</rt></ruby>って", ta: "<ruby>入<rt>はい</rt></ruby>った", kanou: "<ruby>入<rt>はい</rt></ruby>れる", ikou: "<ruby>入<rt>はい</rt></ruby>ろう", meirei: "<ruby>入<rt>はい</rt></ruby>れ", kinshi: "<ruby>入<rt>はい</rt></ruby>るな", ba: "<ruby>入<rt>はい</rt></ruby>れば", ukemi: "<ruby>入<rt>はい</rt></ruby>られる", shieki: "<ruby>入<rt>はい</rt></ruby>らせる" },
+            { masu: "<ruby>運<rt>はこ</rt></ruby>びます", jisho: "<ruby>運<rt>はこ</rt></ruby>ぶ", nai: "<ruby>運<rt>はこ</rt></ruby>ばない", te: "<ruby>運<rt>はこ</rt></ruby>んで", ta: "<ruby>運<rt>はこ</rt></ruby>んだ", kanou: "<ruby>運<rt>はこ</rt></ruby>べる", ikou: "<ruby>運<rt>はこ</rt></ruby>ぼう", meirei: "<ruby>運<rt>はこ</rt></ruby>べ", kinshi: "<ruby>運<rt>はこ</rt></ruby>ぶな", ba: "<ruby>運<rt>はこ</rt></ruby>えば", ukemi: "<ruby>運<rt>はこ</rt></ruby>ばれる", shieki: "<ruby>運<rt>はこ</rt></ruby>ばせる" },
+            { masu: "<ruby>働<rt>はたら</rt></ruby>きます", jisho: "<ruby>働<rt>はたら</rt></ruby>く", nai: "<ruby>働<rt>はたら</rt></ruby>かない", te: "<ruby>働<rt>はたら</rt></ruby>いて", ta: "<ruby>働<rt>はたら</rt></ruby>いた", kanou: "<ruby>働<rt>はたら</rt></ruby>ける", ikou: "<ruby>働<rt>はたら</rt></ruby>こう", meirei: "<ruby>働<rt>はたら</rt></ruby>け", kinshi: "<ruby>働<rt>はたら</rt></ruby>くな", ba: "<ruby>働<rt>はたら</rt></ruby>けば", ukemi: "<ruby>働<rt>はたら</rt></ruby>かれる", shieki: "<ruby>働<rt>はたら</rt></ruby>かせる" },
+            { masu: "<ruby>見<rt>み</rt></ruby>ます", jisho: "<ruby>見<rt>み</rt></ruby>る", nai: "<ruby>見<rt>み</rt></ruby>ない", te: "<ruby>見<rt>み</rt></ruby>て", ta: "<ruby>見<rt>み</rt></ruby>た", kanou: "<ruby>見<rt>み</rt></ruby>られる", ikou: "<ruby>見<rt>み</rt></ruby>よう", meirei: "<ruby>見<rt>み</rt></ruby>ろ", kinshi: "<ruby>見<rt>み</rt></ruby>るな", ba: "<ruby>見<rt>み</rt></ruby>れば", ukemi: "<ruby>見<rt>み</rt></ruby>られる", shieki: "<ruby>見<rt>み</rt></ruby>させる" },
+            { masu: "<ruby>見<rt>み</rt></ruby>せます", jisho: "<ruby>見<rt>み</rt></ruby>せる", nai: "<ruby>見<rt>み</rt></ruby>せない", te: "<ruby>見<rt>み</rt></ruby>せて", ta: "<ruby>見<rt>み</rt></ruby>せた", kanou: "<ruby>見<rt>み</rt></ruby>せられる", ikou: "<ruby>見<rt>み</rt></ruby>せよう", meirei: "<ruby>見<rt>み</rt></ruby>せろ", kinshi: "<ruby>見<rt>み</rt></ruby>せるな", ba: "<ruby>見<rt>み</rt></ruby>せれば", ukemi: "<ruby>見<rt>み</rt></ruby>せられる", shieki: "<ruby>見<rt>み</rt></ruby>せさせる" },
+            { masu: "<ruby>待<rt>ま</rt></ruby>ちます", jisho: "<ruby>待<rt>ま</rt></ruby>つ", nai: "<ruby>待<rt>ま</rt></ruby>たない", te: "<ruby>待<rt>ま</rt></ruby>って", ta: "<ruby>待<rt>ま</rt></ruby>った", kanou: "<ruby>待<rt>ま</rt></ruby>てる", ikou: "<ruby>待<rt>ま</rt></ruby>とう", meirei: "<ruby>待<rt>ま</rt></ruby>て", kinshi: "<ruby>待<rt>ま</rt></ruby>つな", ba: "<ruby>待<rt>ま</rt></ruby>てば", ukemi: "<ruby>待<rt>ま</rt></ruby>たれる", shieki: "<ruby>待<rt>ま</rt></ruby>たせる" },
+            { masu: "<ruby>持<rt>も</rt></ruby>ちます", jisho: "<ruby>持<rt>も</rt></ruby>つ", nai: "<ruby>持<rt>も</rt></ruby>たない", te: "<ruby>持<rt>も</rt></ruby>って", ta: "<ruby>持<rt>も</rt></ruby>った", kanou: "<ruby>持<rt>も</rt></ruby>てる", ikou: "<ruby>持<rt>も</rt></ruby>とう", meirei: "<ruby>持<rt>も</rt></ruby>て", kinshi: "<ruby>持<rt>も</rt></ruby>つな", ba: "<ruby>持<rt>も</rt></ruby>てば", ukemi: "<ruby>持<rt>も</rt></ruby>たれる", shieki: "<ruby>持<rt>も</rt></ruby>たせる" },
+            { masu: "<ruby>休<rt>やす</rt></ruby>みます", jisho: "<ruby>休<rt>やす</rt></ruby>む", nai: "<ruby>休<rt>やす</rt></ruby>まない", te: "<ruby>休<rt>やす</rt></ruby>んで", ta: "<ruby>休<rt>やす</rt></ruby>んだ", kanou: "<ruby>休<rt>やす</rt></ruby>める", ikou: "<ruby>休<rt>やす</rt></ruby>もう", meirei: "<ruby>休<rt>やす</rt></ruby>め", kinshi: "<ruby>休<rt>やす</rt></ruby>むな", ba: "<ruby>休<rt>やす</rt></ruby>めば", ukemi: "<ruby>休<rt>やす</rt></ruby>まれる", shieki: "<ruby>休<rt>やす</rt></ruby>ませる" },
+            { masu: "<ruby>読<rt>よ</rt></ruby>みます", jisho: "<ruby>読<rt>よ</rt></ruby>む", nai: "<ruby>読<rt>よ</rt></ruby>まない", te: "<ruby>読<rt>よ</rt></ruby>んで", ta: "<ruby>読<rt>よ</rt></ruby>んだ", kanou: "<ruby>読<rt>よ</rt></ruby>める", ikou: "<ruby>読<rt>よ</rt></ruby>もう", meirei: "<ruby>読<rt>よ</rt></ruby>め", kinshi: "<ruby>読<rt>よ</rt></ruby>むな", ba: "<ruby>読<rt>よ</rt></ruby>めば", ukemi: "<ruby>読<rt>よ</rt></ruby>まれる", shieki: "<ruby>読<rt>よ</rt></ruby>ませる" },
+            { masu: "<ruby>分<rt>わ</rt></ruby>かります", jisho: "<ruby>分<rt>わ</rt></ruby>かる", nai: "<ruby>分<rt>わ</rt></ruby>からない", te: "<ruby>分<rt>わ</rt></ruby>かって", ta: "<ruby>分<rt>わ</rt></ruby>かった", kanou: "<ruby>分<rt>わ</rt></ruby>かれる", ikou: "<ruby>分<rt>わ</rt></ruby>かろう", meirei: "<ruby>分<rt>わ</rt></ruby>かれ", kinshi: "<ruby>分<rt>わ</rt></ruby>かるな", ba: "<ruby>分<rt>わ</rt></ruby>かれば", ukemi: "<ruby>分<rt>わ</rt></ruby>かられる", shieki: "<ruby>分<rt>わ</rt></ruby>からせる" },
+            { masu: "<ruby>忘<rt>わす</rt></ruby>れます", jisho: "<ruby>忘<rt>わす</rt></ruby>れる", nai: "<ruby>忘<rt>わす</rt></ruby>れない", te: "<ruby>忘<rt>わす</rt></ruby>れて", ta: "<ruby>忘<rt>わす</rt></ruby>れた", kanou: "<ruby>忘<rt>わす</rt></ruby>れられる", ikou: "<ruby>忘<rt>わす</rt></ruby>れよう", meirei: "<ruby>忘<rt>わす</rt></ruby>れろ", kinshi: "<ruby>忘<rt>わす</rt></ruby>れるな", ba: "<ruby>忘<rt>わす</rt></ruby>れれば", ukemi: "<ruby>忘<rt>わす</rt></ruby>れられる", shieki: "<ruby>忘<rt>わす</rt></ruby>れさせる" }
         ];
 
         let selectedVerbs = [];
         let currentIndex = 0;
         let isShowingAnswer = false;
         let targetForm = "";
-        let targetFormName = ""; // ★グローバル変数で形名称を保持
+        let targetFormName = "";
 
+        // 初期化：ルビを解析して正確な五十音順でソート
         function init() {
             const listEl = document.getElementById('verb-list');
-            const stripTags = (str) => str.replace(/<[^>]*>/g, '');
-            verbs.sort((a, b) => stripTags(a.masu).localeCompare(stripTags(b.masu), 'ja'));
             
-            listEl.innerHTML = ""; // 初期化
+            // ルビタグから「読み仮名」だけを抽出するヘルパー関数
+            const getReading = (html) => {
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
+                // rubyタグがある場合、rtタグの中身と、それ以外のテキストを結合する
+                let reading = "";
+                const ruby = temp.querySelector('ruby');
+                if (ruby) {
+                    // ruby内の各要素をループ
+                    ruby.childNodes.forEach(node => {
+                        if (node.nodeName === 'RT') {
+                            reading += node.textContent; // 読み
+                        } else if (node.nodeType === Node.TEXT_NODE) {
+                            // 漢字部分は無視（RTでカバーされているため）
+                        }
+                    });
+                    // rubyタグの後の送り仮名などを結合
+                    const afterText = html.split('</ruby>')[1] || "";
+                    reading += afterText;
+                } else {
+                    reading = temp.textContent;
+                }
+                return reading;
+            };
+
+            // 読み仮名を基準にソート
+            verbs.sort((a, b) => {
+                const readingA = getReading(a.masu);
+                const readingB = getReading(b.masu);
+                return readingA.localeCompare(readingB, 'ja');
+            });
+            
+            listEl.innerHTML = "";
             verbs.forEach((v, index) => {
                 const div = document.createElement('label');
                 div.className = "flex items-center gap-2 p-2 bg-white border border-gray-100 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors";
@@ -126,7 +197,7 @@
 
         function startPractice() {
             const checkedBoxes = document.querySelectorAll('.verb-checkbox:checked');
-            if (checkedBoxes.length === 0) return alert("動詞を選んでください");
+            if (checkedBoxes.length === 0) return alert("練習する動詞をチェックしてください。");
 
             selectedVerbs = Array.from(checkedBoxes).map(cb => verbs[cb.value]);
             
@@ -134,10 +205,9 @@
                 selectedVerbs.sort(() => Math.random() - 0.5);
             }
 
-            // ★設定の取得とリセット
             const selectEl = document.getElementById('form-select');
             targetForm = selectEl.value;
-            targetFormName = selectEl.selectedOptions[0].text; // 形の名前を変数に保存
+            targetFormName = selectEl.selectedOptions[0].text;
             currentIndex = 0;
             isShowingAnswer = false;
             
@@ -159,7 +229,6 @@
             } else {
                 displayEl.innerHTML = v.masu;
                 displayEl.className = "font-bold text-slate-800";
-                // ★ID付き要素を参照せず、保存しておいた変数を使う
                 hintEl.innerHTML = `タップして【<span class="text-blue-600 font-bold">${targetFormName}</span>】を表示`;
             }
         }
